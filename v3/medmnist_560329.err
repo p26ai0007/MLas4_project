@@ -1,6 +1,0 @@
-cpu-bind=MASK - gpu1, task  0  0 [302050]: mask 0x3c0000000000000000000000000000003c0000000000000000000 set
-Input Notebook:  medmnist-adversarial-training.ipynb
-Output Notebook: executed_medmnist_output.ipynb
-Executing:   0%|          | 0/4 [00:00<?, ?cell/s][IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
-Executing notebook with kernel: python3
-Executing:  25%|██▌       | 1/4 [4:12:00<12:36:02, 15120.88s/cell]Executing:  50%|█████     | 2/4 [7:20:18<7:09:03, 12871.67s/cell] Executing:  75%|███████▌  | 3/4 [7:22:09<1:57:25, 7045.19s/cell] Executing: 100%|██████████| 4/4 [7:22:11<00:00, 4264.34s/cell]  Executing: 100%|██████████| 4/4 [7:22:13<00:00, 6633.49s/cell]
