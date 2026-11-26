@@ -14,7 +14,11 @@ Install the required dependencies:
 
 pip install torch torchvision
 
-For GPU: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+\# For GPU (CUDA 12.8):
+
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+
+
 
 pip install medmnist scikit-learn matplotlib seaborn tqdm pillow numpy fvcore
 
@@ -38,27 +42,19 @@ bash run\_notebook.sh
 
 
 
-\---
-
-
-
 \## Dataset
 
 
 
 \- \*\*Source:\*\* \[PathMNIST Colon Pathology Dataset (Kaggle)](https://www.kaggle.com/datasets/dongquan/pathmnist-colon-pathology-dataset)
 
-\- \*\*Task:\*\* Multi-Class Classification (9 distinct tissue types).
+\- \*\*Task:\*\* Multi-Class Classification (9 distinct tissue types)
 
-\- \*\*Classes:\*\* 0 - Adipose, 1 - Background, 2 - Debris, 3 - Lymphocytes, 4 - Mucus, 5 - Smooth muscle, 6 - Normal colon mucosa, 7 - Cancer-associated stroma, 8 - Colorectal adenocarcinoma epithelium.
+\- \*\*Classes:\*\* `0` - Adipose, `1` - Background, `2` - Debris, `3` - Lymphocytes, `4` - Mucus, `5` - Smooth muscle, `6` - Normal colon mucosa, `7` - Cancer-associated stroma, `8` - Colorectal adenocarcinoma epithelium
 
-\- \*\*Format:\*\* The `.npz` file contains RGB images standardized to 28x28 pixels (resized to 224x224 in the training pipeline).
+\- \*\*Format:\*\* The `.npz` file contains RGB images standardized to 28×28 pixels (resized to 224×224 in the training pipeline)
 
-\- \*\*Volume:\*\* 107,180 total samples split into Training (89,996), Validation (10,004), and Test (7,180).
-
-
-
-\---
+\- \*\*Volume:\*\* 107,180 total samples split into Training (89,996), Validation (10,004), and Test (7,180)
 
 
 
@@ -66,7 +62,7 @@ bash run\_notebook.sh
 
 
 
-Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + SwiGLU + Hard-Masked Focal Loss) under \*\*Standard (Clean)\*\* training and \*\*FGSM Adversarial Training\*\* ($\\epsilon = 0.05$, 50% clean + 50% adversarial loss, 100 epochs).
+Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + SwiGLU + Hard-Masked Focal Loss) under \*\*Standard (Clean)\*\* training and \*\*FGSM Adversarial Training\*\* (`ε = 0.05`, 50% clean + 50% adversarial loss, 100 epochs).
 
 
 
@@ -76,13 +72,9 @@ Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + 
 
 | \*\*v1\*\* | \*\*Baseline adversarial training\*\* | Raw training from scratch (`lr=1e-3`, `MultiStepLR`, batch size 512, no data augmentation, zero-init ViT embeddings). |
 
-| \*\*v2\*\* | \*\*Stabilized training\*\* | Added ViT weight initialization (`trunc\_normal\_`/`xavier\_uniform\_`), histology augmentations (flips, rotation, color jitter), `AdamW` (`lr=5e-4`, `wd=1e-2`), `CosineAnnealingLR`, batch size 256, and fixed per-layer MoE loss scaling. |
+| \*\*v2\*\* | \*\*Stabilized training\*\* | Added ViT weight initialization (`trunc\_normal\_` / `xavier\_uniform\_`), histology augmentations (flips, rotation, color jitter), `AdamW` (`lr=5e-4`, `wd=1e-2`), `CosineAnnealingLR`, batch size 256, and fixed per-layer MoE loss scaling. |
 
 | \*\*v3\*\* | \*\*Mixture-of-Depth routing\*\* | Built on \*\*v2\*\* with an `MoDRouter` (`capacity\_factor=0.5`) in each block, routing only the top 50% of tokens through Attention + MoE while bypassing the rest via residual connections. |
-
-
-
-\---
 
 
 
@@ -108,15 +100,11 @@ Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + 
 
 
 
-\---
+\## 2. FGSM Adversarial Robustness (Test Accuracy % vs. ε)
 
 
 
-\## 2. FGSM Adversarial Robustness (Test Accuracy % vs. $\\epsilon$)
-
-
-
-| Version | Mode | $\\epsilon=0.0$ | $\\epsilon=0.01$ | $\\epsilon=0.03$ | $\\epsilon=0.05$ | $\\epsilon=0.10$ | $\\epsilon=0.15$ | $\\epsilon=0.20$ |
+| Version | Mode | ε = 0.0 | ε = 0.01 | ε = 0.03 | ε = 0.05 | ε = 0.10 | ε = 0.15 | ε = 0.20 |
 
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 
@@ -134,10 +122,6 @@ Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + 
 
 
 
-\---
-
-
-
 \## 3. Computational Cost (Inference FLOPs \& MACs)
 
 
@@ -148,11 +132,7 @@ Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + 
 
 | \*\*v1 / v2\*\* | MedLiT-seed (Full Tokens) | 0.5610 GFLOPs | 0.2805 GMACs | 4028.0727 GFLOPs | 2014.0364 GMACs |
 
-| \*\*v3\*\* | MedLiT-seed + MoD ($k=0.5$) | \*\*0.2581 GFLOPs\*\* | \*\*0.1290 GMACs\*\* | \*\*1853.0519 GFLOPs\*\* | \*\*926.5260 GMACs\*\* |
-
-
-
-\---
+| \*\*v3\*\* | MedLiT-seed + MoD (k = 0.5) | \*\*0.2581 GFLOPs\*\* | \*\*0.1290 GMACs\*\* | \*\*1853.0519 GFLOPs\*\* | \*\*926.5260 GMACs\*\* |
 
 
 
@@ -160,7 +140,7 @@ Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + 
 
 
 
-\- \*\*Training Stabilization (v1 -> v2):\*\* Proper ViT initialization, histology augmentations, and `CosineAnnealingLR` boosted clean test accuracy by \*\*+15.06%\*\* (`68.19%` -> `83.25%`) and AT test accuracy under $\\epsilon=0.05$ attack by \*\*+14.67%\*\* (`56.36%` -> `71.03%`).
+\- \*\*Training Stabilization (v1 → v2):\*\* Proper ViT initialization, histology augmentations, and `CosineAnnealingLR` boosted clean test accuracy by \*\*+15.06%\*\* (`68.19%` → `83.25%`) and AT test accuracy under `ε = 0.05` attack by \*\*+14.67%\*\* (`56.36%` → `71.03%`).
 
-\- \*\*Mixture-of-Depths Efficiency (v2 -> v3):\*\* MoD token routing cut inference compute by \*\*\~54%\*\* (`0.5610` -> `0.2581` GFLOPs/image) while maintaining competitive accuracy (`80.63%` clean / `68.22%` at $\\epsilon=0.05$ for AT) and acting as a regularizer against overfitting in adversarial training.
+\- \*\*Mixture-of-Depths Efficiency (v2 → v3):\*\* MoD token routing cut inference compute by \*\*\~54%\*\* (`0.5610` → `0.2581` GFLOPs/image) while maintaining competitive accuracy (`80.63%` clean / `68.22%` at `ε = 0.05` for AT) and acting as a regularizer against overfitting in adversarial training.
 
