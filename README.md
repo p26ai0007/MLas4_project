@@ -10,6 +10,8 @@ For GPU: pip install torch torchvision --index-url https://download.pytorch.org/
 pip install medmnist scikit-learn matplotlib seaborn tqdm pillow numpy fvcore
 ```
 
+Version 1 (v2, v3 are in the repo) weights will be available in: https://drive.google.com/drive/folders/1miesG562WygnukDRwq42c-3wv0Wt_ZxB?usp=sharing
+
 ## How to Run
 
 Each version folder contains a `run_notebook.sh` script. First, make sure each folder has the `pathmnist.npz` file in it, and then run `run_notebook.sh`:
