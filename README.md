@@ -52,7 +52,7 @@ bash run\_notebook.sh
 
 \- \*\*Classes:\*\* `0` - Adipose, `1` - Background, `2` - Debris, `3` - Lymphocytes, `4` - Mucus, `5` - Smooth muscle, `6` - Normal colon mucosa, `7` - Cancer-associated stroma, `8` - Colorectal adenocarcinoma epithelium
 
-\- \*\*Format:\*\* The `.npz` file contains RGB images standardized to 28×28 pixels (resized to 224×224 in the training pipeline)
+\- \*\*Format:\*\* The `.npz` file contains RGB images standardized to 28x28 pixels (resized to 224x224 in the training pipeline)
 
 \- \*\*Volume:\*\* 107,180 total samples split into Training (89,996), Validation (10,004), and Test (7,180)
 
@@ -72,7 +72,7 @@ Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + 
 
 | \*\*v1\*\* | \*\*Baseline adversarial training\*\* | Raw training from scratch (`lr=1e-3`, `MultiStepLR`, batch size 512, no data augmentation, zero-init ViT embeddings). |
 
-| \*\*v2\*\* | \*\*Stabilized training\*\* | Added ViT weight initialization (`trunc\_normal\_` / `xavier\_uniform\_`), histology augmentations (flips, rotation, color jitter), `AdamW` (`lr=5e-4`, `wd=1e-2`), `CosineAnnealingLR`, batch size 256, and fixed per-layer MoE loss scaling. |
+| \*\*v2\*\* | \*\*Stabilized training\*\* | Added ViT weight initialization (`trunc\_normal\_`, `xavier\_uniform\_`), histology augmentations (flips, rotation, color jitter), `AdamW` (`lr=5e-4`, `wd=1e-2`), `CosineAnnealingLR`, batch size 256, and fixed per-layer MoE loss scaling. |
 
 | \*\*v3\*\* | \*\*Mixture-of-Depth routing\*\* | Built on \*\*v2\*\* with an `MoDRouter` (`capacity\_factor=0.5`) in each block, routing only the top 50% of tokens through Attention + MoE while bypassing the rest via residual connections. |
 
