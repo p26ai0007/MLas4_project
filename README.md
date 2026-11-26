@@ -2,15 +2,11 @@
 
 
 
-\## Setup and Installation
+\## Setup \& Installation
 
 
 
-Install the required dependencies.
-
-
-
-\### CPU Installation
+Install the required dependencies:
 
 
 
@@ -18,19 +14,7 @@ Install the required dependencies.
 
 pip install torch torchvision
 
-pip install medmnist scikit-learn matplotlib seaborn tqdm pillow numpy fvcore
-
-```
-
-
-
-\### GPU Installation (CUDA 12.8)
-
-
-
-```bash
-
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+For GPU: pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
 
 pip install medmnist scikit-learn matplotlib seaborn tqdm pillow numpy fvcore
 
@@ -42,7 +26,7 @@ pip install medmnist scikit-learn matplotlib seaborn tqdm pillow numpy fvcore
 
 
 
-Each version folder contains a `run\_notebook.sh` script. Make sure the `pathmnist.npz` dataset file is present in the respective folder before running the script.
+Each version folder contains a `run\_notebook.sh` script. First, make sure each folder has the `pathmnist.npz` file in it, and then run `run\_notebook.sh`:
 
 
 
@@ -54,65 +38,27 @@ bash run\_notebook.sh
 
 
 
+\---
+
+
+
 \## Dataset
 
 
 
 \- \*\*Source:\*\* \[PathMNIST Colon Pathology Dataset (Kaggle)](https://www.kaggle.com/datasets/dongquan/pathmnist-colon-pathology-dataset)
 
-\- \*\*Task:\*\* Multi-class classification (9 tissue classes).
+\- \*\*Task:\*\* Multi-Class Classification (9 distinct tissue types).
 
-\- \*\*Number of Classes:\*\* 9
+\- \*\*Classes:\*\* 0 - Adipose, 1 - Background, 2 - Debris, 3 - Lymphocytes, 4 - Mucus, 5 - Smooth muscle, 6 - Normal colon mucosa, 7 - Cancer-associated stroma, 8 - Colorectal adenocarcinoma epithelium.
 
-\- \*\*Image Format:\*\* RGB images, originally 28 × 28 pixels, resized to 224 × 224 pixels in the training pipeline.
+\- \*\*Format:\*\* The `.npz` file contains RGB images standardized to 28x28 pixels (resized to 224x224 in the training pipeline).
 
-\- \*\*Total Samples:\*\* 107,180
-
-
-
-\### Dataset Split
+\- \*\*Volume:\*\* 107,180 total samples split into Training (89,996), Validation (10,004), and Test (7,180).
 
 
 
-| Split | Number of Samples |
-
-|---|---:|
-
-| Training | 89,996 |
-
-| Validation | 10,004 |
-
-| Test | 7,180 |
-
-| \*\*Total\*\* | \*\*107,180\*\* |
-
-
-
-\### Class Labels
-
-
-
-| Label | Tissue Type |
-
-|---|---|
-
-| 0 | Adipose |
-
-| 1 | Background |
-
-| 2 | Debris |
-
-| 3 | Lymphocytes |
-
-| 4 | Mucus |
-
-| 5 | Smooth muscle |
-
-| 6 | Normal colon mucosa |
-
-| 7 | Cancer-associated stroma |
-
-| 8 | Colorectal adenocarcinoma epithelium |
+\---
 
 
 
@@ -120,37 +66,33 @@ bash run\_notebook.sh
 
 
 
-MedLiT-seed combines Sparse Top-2 Mixture-of-Experts (MoE), Grouped Query Attention (GQA), SwiGLU, and Hard-Masked Focal Loss.
-
-
-
-The models were evaluated under standard training and FGSM adversarial training. Adversarial training used an epsilon of 0.05 and a 50% clean / 50% adversarial loss mixture for 100 epochs.
+Evaluation of \*\*MedLiT-seed\*\* (Sparse Top-2 MoE + Grouped Query Attention + SwiGLU + Hard-Masked Focal Loss) under \*\*Standard (Clean)\*\* training and \*\*FGSM Adversarial Training\*\* ($\\epsilon = 0.05$, 50% clean + 50% adversarial loss, 100 epochs).
 
 
 
 | Version | Description | Key Changes |
 
-|---|---|---|
+| :--- | :--- | :--- |
 
-| \*\*v1\*\* | Baseline adversarial training | Training from scratch, learning rate = 1e-3, MultiStepLR, batch size = 512, no augmentation, zero-initialized ViT embeddings. |
+| \*\*v1\*\* | \*\*Baseline adversarial training\*\* | Raw training from scratch (`lr=1e-3`, `MultiStepLR`, batch size 512, no data augmentation, zero-init ViT embeddings). |
 
-| \*\*v2\*\* | Stabilized training | ViT initialization (trunc\_normal\_ / xavier\_uniform\_), histology augmentations (flips, rotation, color jitter), AdamW (lr = 5e-4, weight decay = 1e-2), CosineAnnealingLR, batch size = 256, fixed MoE loss scaling. |
+| \*\*v2\*\* | \*\*Stabilized training\*\* | Added ViT weight initialization (`trunc\_normal\_`/`xavier\_uniform\_`), histology augmentations (flips, rotation, color jitter), `AdamW` (`lr=5e-4`, `wd=1e-2`), `CosineAnnealingLR`, batch size 256, and fixed per-layer MoE loss scaling. |
 
-| \*\*v3\*\* | Mixture-of-Depth routing | Based on v2, with an MoD router (capacity factor = 0.5) in each block. Only the top 50% of tokens are routed through Attention and MoE; remaining tokens bypass these operations through residual connections. |
-
-
-
-\## 1. Clean Test Set Performance
+| \*\*v3\*\* | \*\*Mixture-of-Depth routing\*\* | Built on \*\*v2\*\* with an `MoDRouter` (`capacity\_factor=0.5`) in each block, routing only the top 50% of tokens through Attention + MoE while bypassing the rest via residual connections. |
 
 
 
-Evaluation was conducted on the 7,180-image test set.
+\---
+
+
+
+\## 1. Clean Test Set Performance (7,180 samples)
 
 
 
 | Version | Training Mode | Val Acc | Test Acc (OA) | AUC | Precision (Macro) | Recall (Macro) | Specificity (Macro) | F1 (Macro) |
 
-|---|---|---:|---:|---:|---:|---:|---:|
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 
 | \*\*v1\*\* | Standard | 71.48% | 68.19% | 0.9311 | 61.23% | 60.04% | 96.03% | 59.86% |
 
@@ -166,17 +108,17 @@ Evaluation was conducted on the 7,180-image test set.
 
 
 
-\## 2. FGSM Adversarial Robustness
+\---
 
 
 
-Test accuracy (%) under FGSM attacks with varying epsilon values.
+\## 2. FGSM Adversarial Robustness (Test Accuracy % vs. $\\epsilon$)
 
 
 
-| Version | Mode | ε = 0.00 | ε = 0.01 | ε = 0.03 | ε = 0.05 | ε = 0.10 | ε = 0.15 | ε = 0.20 |
+| Version | Mode | $\\epsilon=0.0$ | $\\epsilon=0.01$ | $\\epsilon=0.03$ | $\\epsilon=0.05$ | $\\epsilon=0.10$ | $\\epsilon=0.15$ | $\\epsilon=0.20$ |
 
-|---|---|---:|---:|---:|---:|---:|---:|---:|
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 
 | \*\*v1\*\* | Standard | 68.19 | 43.12 | 33.66 | 29.86 | 25.49 | 22.66 | 22.02 |
 
@@ -192,21 +134,25 @@ Test accuracy (%) under FGSM attacks with varying epsilon values.
 
 
 
-\## 3. Computational Cost
+\---
 
 
 
-Inference computation measured per image.
+\## 3. Computational Cost (Inference FLOPs \& MACs)
 
 
 
-| Version | Architecture | FLOPs / Image | MACs / Image | Total Test FLOPs (7,180 Images) | Total Test MACs |
+| Version | Architecture | FLOPs / Image | MACs / Image | Total Test FLOPs (7,180 imgs) | Total Test MACs |
 
-|---|---|---:|---:|---:|
+| :--- | :--- | :---: | :---: | :---: | :---: |
 
 | \*\*v1 / v2\*\* | MedLiT-seed (Full Tokens) | 0.5610 GFLOPs | 0.2805 GMACs | 4028.0727 GFLOPs | 2014.0364 GMACs |
 
-| \*\*v3\*\* | MedLiT-seed + MoD (k = 0.5) | \*\*0.2581 GFLOPs\*\* | \*\*0.1290 GMACs\*\* | \*\*1853.0519 GFLOPs\*\* | \*\*926.5260 GMACs\*\* |
+| \*\*v3\*\* | MedLiT-seed + MoD ($k=0.5$) | \*\*0.2581 GFLOPs\*\* | \*\*0.1290 GMACs\*\* | \*\*1853.0519 GFLOPs\*\* | \*\*926.5260 GMACs\*\* |
+
+
+
+\---
 
 
 
@@ -214,9 +160,7 @@ Inference computation measured per image.
 
 
 
-\- \*\*Training stabilization (v1 → v2):\*\* ViT initialization, histology augmentations, and CosineAnnealingLR improved clean test accuracy from 68.19% to 83.25% (+15.06 percentage points). Under adversarial training, test accuracy at ε = 0.05 increased from 56.36% to 71.03% (+14.67 percentage points).
+\- \*\*Training Stabilization (v1 -> v2):\*\* Proper ViT initialization, histology augmentations, and `CosineAnnealingLR` boosted clean test accuracy by \*\*+15.06%\*\* (`68.19%` -> `83.25%`) and AT test accuracy under $\\epsilon=0.05$ attack by \*\*+14.67%\*\* (`56.36%` -> `71.03%`).
 
-\- \*\*Mixture-of-Depth efficiency (v2 → v3):\*\* MoD token routing reduced inference computation by approximately 54% (0.5610 to 0.2581 GFLOPs/image). The v3 adversarially trained model achieved 80.63% clean test accuracy and 68.22% accuracy at ε = 0.05.
-
-
+\- \*\*Mixture-of-Depths Efficiency (v2 -> v3):\*\* MoD token routing cut inference compute by \*\*\~54%\*\* (`0.5610` -> `0.2581` GFLOPs/image) while maintaining competitive accuracy (`80.63%` clean / `68.22%` at $\\epsilon=0.05$ for AT) and acting as a regularizer against overfitting in adversarial training.
 
